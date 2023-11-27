@@ -7,7 +7,7 @@ const Home = ({config}) => {
   const {items} = config?.menu?.lobby || [];
   const [gameList, setGameList] = useState([])
   const [pagination, setPagination] = useState({
-    selectedCat: items[0].path.split("/").slice(-1),
+    selectedCat: "",//items[0].path.split("/").slice(-1) || "",
     pageSize: 2,
     pageNumber: 1,
     count:0,
@@ -15,18 +15,23 @@ const Home = ({config}) => {
   })
 
   const getGamesByCat = async (cat, pageNumber, pageSize) => {
-    const res = await fetch(`https://casino.api.stg.kansino.nl/v1/kansino/en/games/tiles?gameCategories=${cat}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
-    const catData = await res.json();
-    setGameList([...gameList, ...catData?.items]);
-    setPagination({
-      ...pagination,
-      count: catData.count,
-      totalPages: catData.count / pagination.pageSize,
-    })
+    try {
+      
+      const res = await fetch(`https://casino.api.kansino.nl/v1/kansino/en/games/tiles?gameCategories=${cat}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
+      const catData = await res.json();
+      setGameList([...gameList, ...catData?.items]);
+      setPagination({
+        ...pagination,
+        count: catData.count,
+        totalPages: catData.count / pagination.pageSize,
+      })
+    } catch (error) {
+      console.log("error", error)
+    }
   }
 
   useEffect(() => {
-    getGamesByCat(pagination.selectedCat, 1, pagination.pageSize);
+    //getGamesByCat(pagination.selectedCat, 1, pagination.pageSize);
 
     /* var div = document.querySelector("#game-listing");
     var height = div.clientHeight;
