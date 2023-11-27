@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Image from 'next/image';
 import Link from "next/link"
 import styles from './Home.module.scss';
+import { gameCatApi, gameSearchApi } from "../../../redux/reducers/gameSlice";
 
 let timeoutId;
 const Home = ({ config }) => {
@@ -18,6 +20,9 @@ const Home = ({ config }) => {
   })
 
   const searchRef = useRef(null);
+  const dispatch = useDispatch()
+  const gameState = useSelector(state => state.game)
+  console.log("gameState", gameState)
 
   const getGamesByCat = async (cat) => {
     try {
@@ -35,7 +40,6 @@ const Home = ({ config }) => {
     try {
       const searchText = searchRef.current.value
       if(searchText.length > 3){
-        console.log("searchRef", searchText)
         setLoading(true)
         if (timeoutId) {
           clearTimeout(timeoutId);
@@ -45,6 +49,7 @@ const Home = ({ config }) => {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/games/tiles?search=${searchText}`)
           const catData = await res.json();
           setGameList(catData?.items);
+          dispatch(gameSearchApi(searchText))
           setSelectedCat("");
           setLoading(false)
         }, 300);
@@ -59,6 +64,7 @@ const Home = ({ config }) => {
     const catSlug = items[0]?.path.split("/").slice(-1)
     setSelectedCat(items[0]?.name)
     getGamesByCat(catSlug);
+    dispatch(gameCatApi(catSlug))
   }, [])
 
   const handleCategory = (catItem) => {
