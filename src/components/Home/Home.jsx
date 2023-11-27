@@ -27,6 +27,20 @@ const Home = ({config}) => {
 
   useEffect(() => {
     getGamesByCat(pagination.selectedCat, 1, pagination.pageSize);
+
+    /* var div = document.querySelector("#game-listing");
+    var height = div.clientHeight;
+
+
+    const handleScroll = event => {
+      console.log('window.scrollY', window.scrollY, height);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    }; */
   },[])
 
   const handleCategory = (catItem) => {
@@ -62,11 +76,11 @@ const Home = ({config}) => {
           <button>search</button>
         </div>
 
-        <div className={styles.grid}>
+        <div className={styles.grid} id="game-listing">
 
           {gameList?.map(game => (
 
-            <span className={styles.card}>
+            <span className={styles.card} key={game.id}>
               <h2>{game?.gameText}</h2>
               <Image src={game?.image?.thumbnail?.src} width={"150"} height={"150"} alt='Games-thumbnail' />
             </span>

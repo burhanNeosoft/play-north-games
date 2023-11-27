@@ -5,11 +5,11 @@ import Home from "../src/components/Home"
 export async function getServerSideProps() {
   const res = await fetch('https://casino.api.stg.kansino.nl/v1/kansino/en/config')
   const config = await res.json();
-  
+  console.log("props", config)
   return { props: { config } }
 }
 
-const HomeIndex = (props) => {
+const HomeIndex = (props:any) => {
   const {config} = props
   return (
     <React.Suspense fallback="loading....">
