@@ -5,13 +5,13 @@ import Home from "../src/components/Home"
 export async function getServerSideProps() {
   try {
     
-    const res = await fetch('https://casino.api.kansino.nl/v1/kansino/en/config')
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/config`)
     const config = await res.json();
     console.log("props", config)
     return { props: { config } }
     //return { props: { config: configApiData } }
   } catch (error) {
-    return { props: { config: configApiData } }
+    return { props: { config: {} } }
   }
 }
 
