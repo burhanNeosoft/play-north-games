@@ -66,11 +66,11 @@ const Home = ({ config }) => {
         <div>
           <ul>
             {items?.map(item => (
-              <li key={item.id} className={selectedCat === item.name ? "selected" : undefined} onClick={() => handleCategory(item)}>{item?.name}</li>
+              <li key={item.id} className={selectedCat === item.name ? styles.selected : undefined} onClick={() => handleCategory(item)}>{item?.name}</li>
             ))}
           </ul>
 
-          <input type="text" placeholder="Search...." ref={searchRef} onKeyUp={getGamesBySearch}/>
+          <input type="text" className={styles.searchInput} placeholder="Search...." ref={searchRef} onKeyUp={getGamesBySearch}/>
         </div>
 
         <div className={styles.grid} id="game-listing">
@@ -78,7 +78,7 @@ const Home = ({ config }) => {
 
             <span className={styles.card} key={game.id}>              
               <Image src={game?.image?.thumbnail?.src} width={"150"} height={"150"} alt='Games-thumbnail' />
-              <p>{game?.gameText}</p>
+              <p className={styles.gameTitle}>{game?.gameText}</p>
             </span>
           )) : (
             <span>
