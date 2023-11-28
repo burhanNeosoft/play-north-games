@@ -1,8 +1,8 @@
-import '../styles/globals.css'
+import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import Error from "next/error";
-import { Providers } from '../redux/provider';
-import MainLayout from "../src/components/Layout/MainLayout";
+import { Providers } from '@/redux/provider';
+import MainLayout from "@/components/Layout/MainLayout";
 
 function MyApp({ Component, pageProps }: AppProps) {
   if (pageProps.error) {

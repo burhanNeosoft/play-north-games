@@ -30,16 +30,27 @@ const gameSlice = createSlice({
   name: "game",
   initialState: {
     categories:[],
-    list: [],
+    list: {},
+    isLoading: false
   },
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(gameCatApi.pending, (state, action) => {
+      state.isLoading = true;
+    });
+
     builder.addCase(gameCatApi.fulfilled, (state, action) => {
       state.list = action.payload;
+      state.isLoading = false;
     });
+
+    builder.addCase(gameSearchApi.pending, (state, action) => {
+      state.isLoading = true;
+    });    
 
     builder.addCase(gameSearchApi.fulfilled, (state, action) => {
       state.list = action.payload;
+      state.isLoading = false;
     });
   },
 });

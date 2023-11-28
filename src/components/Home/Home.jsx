@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Image from 'next/image';
 import Link from "next/link"
 import styles from './Home.module.scss';
-import { gameCatApi, gameSearchApi } from "../../../redux/reducers/gameSlice";
+import { gameCatApi, gameSearchApi } from "@/redux/reducers/gameSlice";
 
 let timeoutId;
 const Home = ({ config }) => {
   const { items } = config?.menu?.lobby || [];
   const [gameList, setGameList] = useState([])
-  const [loading, setLoading] = useState(false);
   const [selectedCat, setSelectedCat] = useState("")
   const [pagination, setPagination] = useState({
     selectedCat: "",
@@ -21,40 +20,22 @@ const Home = ({ config }) => {
 
   const searchRef = useRef(null);
   const dispatch = useDispatch()
-  const gameState = useSelector(state => state.game)
-  console.log("gameState", gameState)
-
-  const getGamesByCat = async (cat) => {
-    try {
-      setLoading(true)
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/games/tiles?gameCategories=${cat}`)
-      const catData = await res.json();
-      setGameList(catData?.items);
-      setLoading(false)
-    } catch (error) {
-      console.log("error", error)
-    }
-  }
+  const gameState = useSelector(state => state.game);
+  const {list: {items:gameItems}, isLoading:gameStateLoading} = gameState;
 
   const getGamesBySearch = async () => {
     try {
       const searchText = searchRef.current.value
       if(searchText.length > 3){
-        setLoading(true)
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
 
         timeoutId = setTimeout( async () => {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/games/tiles?search=${searchText}`)
-          const catData = await res.json();
-          setGameList(catData?.items);
           dispatch(gameSearchApi(searchText))
           setSelectedCat("");
-          setLoading(false)
         }, 300);
-      }
-      
+      }      
     } catch (error) {
       console.log("error", error)
     }
@@ -63,36 +44,37 @@ const Home = ({ config }) => {
   useEffect(() => {
     const catSlug = items[0]?.path.split("/").slice(-1)
     setSelectedCat(items[0]?.name)
-    getGamesByCat(catSlug);
     dispatch(gameCatApi(catSlug))
   }, [])
+
+  useMemo(() => {
+    setGameList(gameItems || []);
+  }, [gameItems])
 
   const handleCategory = (catItem) => {
     const catSlug = catItem.path.split("/").slice(-1)
     setSelectedCat(catItem?.name)
-    getGamesByCat(catSlug)
+    dispatch(gameCatApi(catSlug))
   }
 
   return (
     <div className={styles.container}>
-
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to Play North
+          Welcomes to Play North
         </h1>
-
         <div>
           <ul>
             {items?.map(item => (
-              <li key={item.id} className={selectedCat === item.name && "selected"} onClick={() => handleCategory(item)}>{item?.name}</li>
+              <li key={item.id} className={selectedCat === item.name ? "selected" : undefined} onClick={() => handleCategory(item)}>{item?.name}</li>
             ))}
           </ul>
 
-          <input type="text" ref={searchRef} onKeyUp={getGamesBySearch}/>
+          <input type="text" placeholder="Search...." ref={searchRef} onKeyUp={getGamesBySearch}/>
         </div>
 
         <div className={styles.grid} id="game-listing">
-          {loading ? <span>Loding.....</span> : gameList?.length ? gameList?.map(game => (
+          {gameStateLoading ? <span>Loding.....</span> : gameList?.length ? gameList?.map(game => (
 
             <span className={styles.card} key={game.id}>              
               <Image src={game?.image?.thumbnail?.src} width={"150"} height={"150"} alt='Games-thumbnail' />
