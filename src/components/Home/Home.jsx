@@ -10,13 +10,6 @@ const Home = ({ config }) => {
   const { items } = config?.menu?.lobby || [];
   const [gameList, setGameList] = useState([])
   const [selectedCat, setSelectedCat] = useState("")
-  const [pagination, setPagination] = useState({
-    selectedCat: "",
-    pageSize: 10,
-    pageNumber: 1,
-    count: 0,
-    totalPages: 0,
-  })
 
   const searchRef = useRef(null);
   const dispatch = useDispatch()
@@ -52,7 +45,7 @@ const Home = ({ config }) => {
   }, [gameItems])
 
   const handleCategory = (catItem) => {
-    const catSlug = catItem.path.split("/").slice(-1)
+    const catSlug = catItem?.path?.split("/").slice(-1)
     setSelectedCat(catItem?.name)
     dispatch(gameCatApi(catSlug))
   }
