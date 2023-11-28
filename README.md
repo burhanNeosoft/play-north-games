@@ -7,9 +7,9 @@ First, install all the dependencies
 npm install
 # or
 yarn install
+```
 
 run the development server:
-
 ```bash
 npm run dev
 # or
